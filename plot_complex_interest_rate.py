@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 prin=1
 t=2
-n=20
+n=100
 term = np.zeros(n,dtype=complex)
 rate = complex(0,np.pi)
 
@@ -40,6 +40,7 @@ def plot_terms(prin, total_time, n, rate, plot_type):
 
     if(plot_type == "arrow"):
         plt.figure(1)
+        term = np.insert(term,0,complex(1,0))
         plt.quiver(term[:-1].real, term[:-1].imag,term[1:].real-term[:-1].real, term[1:].imag-term[:-1].imag,scale=1, scale_units='xy',angles='xy')
         plt.grid()
         plt.show()
@@ -48,5 +49,5 @@ def plot_terms(prin, total_time, n, rate, plot_type):
     print(term)
     return a
 
-    
+
 plot_terms(prin, t, n,complex(0,np.pi),"arrow")
