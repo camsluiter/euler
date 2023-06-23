@@ -40,7 +40,7 @@ def plot_terms(prin, total_time, n, rate, plot_type):
 
     if(plot_type == "arrow"):
         plt.figure(1)
-        plt.plot(term[:].real,term[:].imag)
+        plt.quiver(term[:-1].real, term[:-1].imag,term[1:].real-term[:-1].real, term[1:].imag-term[:-1].imag,scale=1, scale_units='xy',angles='xy')
         plt.grid()
         plt.show()
 
