@@ -1,12 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-
+import pandas as pd
 # interest rate
 
 prin=1
 t=np.pi
-n=2
+n=19
 term = np.zeros(n,dtype=complex)
 rate = complex(0,1)
 
@@ -25,7 +25,7 @@ def plot_terms(prin, total_time, n, rate, plot_type):
 
     if(plot_type == "triangles"):
     #trying to demonstrate how the successive multiplications create a circle
-        colors = plt.cm.get_cmap('hsv', 100)
+        colors = plt.cm.get_cmap('hsv', n)
         for i in range(n):
             if i == 0:
                 x.append(plt.Polygon([[0,0],[1,0], [term[0].real,term[0].imag]],color=colors(i)))
@@ -47,12 +47,25 @@ def plot_terms(prin, total_time, n, rate, plot_type):
         plt.show()
 
     if(plot_type=="dots"):
-        #plt.figure(1)
-        sns.scatterplot(x=term[:].real, y=term[:].imag)
-        #plt.grid()
-        #plt.show()
+        sns.set_style("darkgrid")
+        colors = sns.color_palette("hls", n)
+        print(term)
+        if(len(term) <20):
+            for x,y in zip(term[:].real, term[:].imag):
+                plt.text(x+0.02, y, '%.2f + %.2fi' % (float(x), float(y)))
+        point_plot=sns.scatterplot(term,x=term.real, y=term.imag, hue=term.real,legend=False)
 
-    print(term)
+        point_plot.set(xlabel="Real",ylabel="Imaginary")
+        #point_plot.plot([0],[0],'o',ms=300,mec='r',mfc='none')
+        
+        circle1 = plt.Circle((0, 0), 1.0, color='black', fill=False,linestyle="--",label="Unit Circle")
+        
+        point_plot.add_patch(circle1)
+        point_plot.legend()
+        #plt.grid()
+        
+        plt.show()
+
 
 
 
