@@ -43,6 +43,16 @@ def plot_terms(prin, total_time, n, rate, plot_type):
         plt.figure(1)
         term = np.insert(term,0,complex(1,0))
         plt.quiver(term[:-1].real, term[:-1].imag,term[1:].real-term[:-1].real, term[1:].imag-term[:-1].imag,scale=1, scale_units='xy',angles='xy')
+        real_values = term[:].real
+        imag_values = term[:].imag
+        for i in range(n):
+            plt.plot([0, real_values[i]], [0, imag_values[i]])
+            plt.gca().add_patch(plt.Rectangle([real_values[i],imag_values[i]],-.05,.05,np.degrees(np.angle(term[i])),facecolor='none',alpha=1,edgecolor='black')  )  
+
+        # make a rectangle
+        # the distance from the imaginary axis to the point is imag_value[i]
+        print(np.arctan(imag_values[1]/real_values[1]))
+        print(np.angle(term[1]))
         plt.grid()
         plt.show()
 
@@ -69,4 +79,4 @@ def plot_terms(prin, total_time, n, rate, plot_type):
 
 
 
-plot_terms(prin, t, n,rate,"dots")
+plot_terms(prin, t, n,rate,"arrows")
