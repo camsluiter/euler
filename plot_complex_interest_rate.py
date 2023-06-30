@@ -6,7 +6,7 @@ import pandas as pd
 
 prin=1
 t=np.pi
-n=19
+n=3
 term = np.zeros(n,dtype=complex)
 rate = complex(0,1)
 
@@ -40,9 +40,20 @@ def plot_terms(prin, total_time, n, rate, plot_type):
         plt.show()
 
     if(plot_type == "arrows"):
-        plt.figure(1)
+        fig, axs = plt.subplots(1,1)
+        sns.set_theme()
+        sns.set_style("ticks")
+        #sns.set_context("paper")
+        #sns.despine()
         term = np.insert(term,0,complex(1,0))
         plt.quiver(term[:-1].real, term[:-1].imag,term[1:].real-term[:-1].real, term[1:].imag-term[:-1].imag,scale=1, scale_units='xy',angles='xy')
+        x_axis_delta = max(term[:].real+0.5) - min(term[:].real)-0.5
+
+        plt.xlim(min(term[:].real)-0.5,max(term[:].real+0.5))
+        axs.axis('equal')
+        plt.ylim(min(term[:].real)-0.5,max(term[:].real+0.5))
+        #ax.set(xlim=(-1, 1), ylim=(-2, 2))
+        #sns.despine()
         real_values = term[:].real
         imag_values = term[:].imag
         for i in range(n):
