@@ -6,11 +6,12 @@ import pandas as pd
 
 prin=1
 t=np.pi
-n=3
-term = np.zeros(n,dtype=complex)
+#n=100
+
 rate = complex(0,1)
 
 def term_calculator(rate, n, total_time):
+    term = np.zeros(n,dtype=complex)
     for i in range(n):
         if i ==0:
             term[i]=(1+(rate*total_time)/n)
@@ -18,9 +19,10 @@ def term_calculator(rate, n, total_time):
             term[i]=term[i-1]*(1+(rate*total_time)/n) 
     return term
 
-def plot_terms(prin, total_time, n, rate, plot_type):
-
+def plot_terms(prin, total_time, n, rate, plot_type, print_unit_circ,print_coor):
+    
     x=[]
+    
     term = term_calculator(rate,n, total_time)
 
     if(plot_type == "triangles"):
@@ -40,32 +42,41 @@ def plot_terms(prin, total_time, n, rate, plot_type):
         plt.show()
 
     if(plot_type == "arrows"):
-        fig, axs = plt.subplots(1,1)
+        fig = plt.figure()
+        #fig, (ax_l, ax_r) = plt.subplots(1, 2, figsize=(8, 4))
+        #ax = fig.add_axes([0.1,0.1,0.1,0.1])
+        colors = sns.color_palette("husl", n)
+        colors = sns.color_palette("mako", n)
         sns.set_theme()
-        sns.set_style("ticks")
-        #sns.set_context("paper")
+        sns.set_style("whitegrid")
+        sns.set_style("darkgrid", {"axes.facecolor": ".9"})
+        sns.set_context("paper")
+        #sns.set(rc={'axes.facecolor':'grey', 'figure.facecolor':'cornflowerblue'})
         #sns.despine()
+        arrow_headlength=-0.15*n + 5
+        # arrow_width=
         term = np.insert(term,0,complex(1,0))
-        plt.quiver(term[:-1].real, term[:-1].imag,term[1:].real-term[:-1].real, term[1:].imag-term[:-1].imag,scale=1, scale_units='xy',angles='xy')
-        x_axis_delta = max(term[:].real+0.5) - min(term[:].real)-0.5
+        arrow_plt=plt.quiver(term[:-1].real, term[:-1].imag,term[1:].real-term[:-1].real, term[1:].imag-term[:-1].imag,scale=1, scale_units='xy',angles='xy', color=colors, headlength=arrow_headlength,headaxislength=arrow_headlength, width=0.005)
+        if(print_coor):
+            for x,y in zip(term[:].real, term[:].imag):
+                plt.text(x+0.02, y, '%.2f + %.2fi' % (float(x), float(y)))
+        if(print_unit_circ):
+            plt.Circle((0, 0), 1.0, color='black', fill=False,linestyle="--",label="Unit Circle")
+            #arrow_plt.add_patch(circle1)
 
-        plt.xlim(min(term[:].real)-0.5,max(term[:].real+0.5))
-        axs.axis('equal')
-        plt.ylim(min(term[:].real)-0.5,max(term[:].real+0.5))
+        plt.fill(max(term[:].real+1),max(term[:].imag+1))
+        #plt.ylim(min(term[:].real)-0.5,max(term[:].real+0.5))
         #ax.set(xlim=(-1, 1), ylim=(-2, 2))
         #sns.despine()
-        real_values = term[:].real
-        imag_values = term[:].imag
-        for i in range(n):
-            plt.plot([0, real_values[i]], [0, imag_values[i]])
-            plt.gca().add_patch(plt.Rectangle([real_values[i],imag_values[i]],-.05,.05,np.degrees(np.angle(term[i])),facecolor='none',alpha=1,edgecolor='black')  )  
-
+        if n <15:
+            for i in range(n):
+                plt.plot([0, term[i].real], [0, term[i].imag],color="black")
+                plt.gca().add_patch(plt.Rectangle([term[i].real,term[i].imag],-.05,.05,np.degrees(np.angle(term[i])),facecolor='none',alpha=1,edgecolor='black')  )  
+        print(len(term))
+        
         # make a rectangle
         # the distance from the imaginary axis to the point is imag_value[i]
-        print(np.arctan(imag_values[1]/real_values[1]))
-        print(np.angle(term[1]))
-        plt.grid()
-        plt.show()
+
 
     if(plot_type=="dots"):
         sns.set_style("darkgrid")
@@ -90,4 +101,9 @@ def plot_terms(prin, total_time, n, rate, plot_type):
 
 
 
-plot_terms(prin, t, n,rate,"arrows")
+plot_terms(prin, t, 30,rate,"arrows",1,1)
+# fig, (ax_l, ax_r) = plt.subplots(1, 2, figsize=(8, 4))
+# plot_terms(prin, t, 5,rate,"arrows")
+# plot_terms(prin, t, 10,rate,"arrows")
+# plot_terms(prin, t, 20,rate,"arrows")
+plt.show()
