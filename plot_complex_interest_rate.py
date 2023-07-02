@@ -61,8 +61,8 @@ def plot_terms(prin, total_time, n, rate, plot_type, print_unit_circ,print_coor)
             for x,y in zip(term[:].real, term[:].imag):
                 plt.text(x+0.02, y, '%.2f + %.2fi' % (float(x), float(y)))
         if(print_unit_circ):
-            plt.Circle((0, 0), 1.0, color='black', fill=False,linestyle="--",label="Unit Circle")
-            #arrow_plt.add_patch(circle1)
+            unit_circ = plt.Circle((0, 0), 1.0, color='black', fill=False,linestyle="--",label="Unit Circle")
+            plt.gca().add_patch(unit_circ)
 
         plt.fill(max(term[:].real+1),max(term[:].imag+1))
         #plt.ylim(min(term[:].real)-0.5,max(term[:].real+0.5))
