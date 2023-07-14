@@ -10,12 +10,12 @@ t=np.pi
 
 rate = complex(0,1)
 
-def term_calculator(prin,rate, n, total_time,complex):
-    if(complex):
-        term = np.zeros(n,dtype=complex)
+def term_calculator(prin,rate, n, total_time,cmplx):
+    if(cmplx):
+        term = np.zeros(n*total_time,dtype=complex)
     else:
-        term=np.zeros(n)
-    for i in range(n):
+        term=np.zeros(n*total_time)
+    for i in range(n*total_time):
         if i ==0:
             term[i]=prin*(1+(rate*total_time)/n)
         else:
@@ -23,13 +23,10 @@ def term_calculator(prin,rate, n, total_time,complex):
     return term
 
 
-def plot_terms(prin, total_time, n, rate, plot_type, print_unit_circ,print_coor,complex):
+def plot_terms(prin, total_time, n, rate, plot_type, unit_circ,coor):
     
     x=[]
-    if(complex):
-        term = term_calculator(prin, rate,n, total_time,1)
-    else:
-        term = term_calculator(prin, rate,n, total_time,0)
+    term = term_calculator(prin, rate,n, total_time,1)
     if(plot_type == "triangles"):
     #trying to demonstrate how the successive multiplications create a circle
         colors = plt.cm.get_cmap('hsv', n)
@@ -46,24 +43,29 @@ def plot_terms(prin, total_time, n, rate, plot_type, print_unit_circ,print_coor,
         plt.ylim(-5,5)
 
     if(plot_type == "arrows"):
-        fig = plt.figure()
-        #fig, (ax_l, ax_r) = plt.subplots(1, 2, figsize=(8, 4))
-        #ax = fig.add_axes([0.1,0.1,0.1,0.1])
+        
         colors = sns.color_palette("husl", n)
         colors = sns.color_palette("mako", n)
-        sns.set_theme()
+        #sns.set_theme()
         sns.set_style("whitegrid")
-        sns.set_style("darkgrid", {"axes.facecolor": ".9"})
+        #sns.set_style("darkgrid", {"axes.facecolor": ".9"})
         sns.set_context("paper")
+        #fig = plt.figure()
+        fig, ax = plt.subplots()
+        #fig, (ax_l, ax_r) = plt.subplots(1, 2, figsize=(8, 4))
+        #ax = fig.add_axes([0.1,0.1,0.1,0.1])
+        
+
+
         #sns.set(rc={'axes.facecolor':'grey', 'figure.facecolor':'cornflowerblue'})
         #sns.despine()
         arrow_headlength=-0.15*n + 5
         term = np.insert(term,0,complex(1,0))
         arrow_plt=plt.quiver(term[:-1].real, term[:-1].imag,term[1:].real-term[:-1].real, term[1:].imag-term[:-1].imag,scale=1, scale_units='xy',angles='xy', color=colors, headlength=arrow_headlength,headaxislength=arrow_headlength, width=0.005)
-        if(print_coor):
+        if(coor):
             for x,y in zip(term[:].real, term[:].imag):
                 plt.text(x+0.02, y, '%.2f + %.2fi' % (float(x), float(y)))
-        if(print_unit_circ):
+        if(unit_circ):
             unit_circ = plt.Circle((0, 0), 1.0, color='black', fill=False,linestyle="--",label="Unit Circle")
             plt.gca().add_patch(unit_circ)
 
@@ -71,8 +73,14 @@ def plot_terms(prin, total_time, n, rate, plot_type, print_unit_circ,print_coor,
         #plt.ylim(min(term[:].real)-0.5,max(term[:].real+0.5))
         #ax.set(xlim=(-1, 1), ylim=(-2, 2))
         #sns.despine()
+        ax.spines[["left", "bottom"]].set_position(("data", 0))
+        # Hide the top and right spines.
+        ax.spines[["top", "right"]].set_visible(False)
+        # plt.xlim(-3, 3)
+        # plt.ylim(-3, 3)
         if n <15:
             for i in range(n):
+                xr=2
                 plt.plot([0, term[i].real], [0, term[i].imag],color="black")
                 plt.gca().add_patch(plt.Rectangle([term[i].real,term[i].imag],-.05,.05,np.degrees(np.angle(term[i])),facecolor='none',alpha=1,edgecolor='black')  )  
         print(len(term))
@@ -84,35 +92,35 @@ def plot_terms(prin, total_time, n, rate, plot_type, print_unit_circ,print_coor,
     if(plot_type=="dots"):
         colors = sns.color_palette("hls", n)
         
-        if(not complex):
-            fig, ax = plt.subplots()
-
         if(len(term) <20):
             for x,y in zip(term[:].real, term[:].imag):
                 plt.text(x+0.02, y, '%.2f + %.2fi' % (float(x), float(y)))
-        if(complex):
             point_plot=sns.scatterplot(term,x=term.real, y=term.imag, hue=term.real,legend=False)
-            
-        else:
-            sns.set(style='ticks')
-            #x = [0] * 10
-            x_arr =  [0 for i in range(n)]
-            #point_plot=sns.scatterplot(x=x_arr,y=term, hue=term.real,legend=False)
-            plt.scatter(x_arr, term, c=colors, alpha=0.5)
-            #ax.set_aspect('equal')
-            
-            ax.grid(True, which='both')
-            sns.despine(ax=ax, offset=0) # the important part here
-        # point_plot.set(xlabel="Real",ylabel="Imaginary")
-        #point_plot.plot([0],[0],'o',ms=300,mec='r',mfc='none')
-        
+                    
         circle1 = plt.Circle((0, 0), 1.0, color='black', fill=False,linestyle="--",label="Unit Circle")
-        if(complex):
-            plt.gca().add_patch(circle1)
+        plt.gca().add_patch(circle1)
         plt.gca().legend()
+        plt.gca.set_aspect('equal', adjustable='box')
         #plt.grid()
 
 
+def real_compound_interest(prin, rate, n, time):
+    colors = sns.color_palette("mako", n+1)
+    terms = term_calculator(prin,rate, n, time, False)
+    terms = np.insert(terms,0,prin)
+    fig, ax = plt.subplots()
+    sns.set(style='ticks')
+    #x = [0] * 10
+    x_arr =  [i for i in range(n*time+1   )]
+
+    #point_plot=sns.scatterplot(x=x_arr,y=term, hue=term.real,legend=False)
+    plt.scatter(x_arr, terms, c=colors)
+    #ax.set_aspect('equal')
+    plt.yticks(np.arange(1, 2, step=0.2))
+    ax.set_xlabel('Months')
+    ax.set_ylabel('Dollars')
+    ax.grid(True, which='both')
+    sns.despine(ax=ax, offset=0) # the important part here
 
 
 
@@ -121,5 +129,7 @@ def plot_terms(prin, total_time, n, rate, plot_type, print_unit_circ,print_coor,
 # plot_terms(prin, t, 5,rate,"arrows")
 # plot_terms(prin, t, 10,rate,"arrows")
 # plot_terms(prin, t, 20,rate,"arrows")
-plot_terms(100,1,1,0.03,"dots",0,0,0)
+plot_terms(prin=1,total_time=np.pi,n=10,rate=complex(0,1),plot_type="arrows",unit_circ=0,coor=0)
+#real_compound_interest(1,0.50,12,1)
+
 plt.show()
