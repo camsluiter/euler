@@ -14,12 +14,12 @@ def term_calculator(prin,rate, n, total_time,cmplx):
     if(cmplx):
         term = np.zeros(n*total_time,dtype=complex)
     else:
-        term=np.zeros(n*total_time)
+        term=np.zeros(n)
     for i in range(n*total_time):
         if i ==0:
-            term[i]=prin*(1+(rate*total_time)/n)
+            term[i]=prin*(1+(rate)/n)
         else:
-            term[i]=term[i-1]*(1+(rate*total_time)/n) 
+            term[i]=term[i-1]*(1+(rate)/n) 
     return term
 
 
@@ -44,8 +44,8 @@ def plot_terms(prin, total_time, n, rate, plot_type, unit_circ,coor):
 
     if(plot_type == "arrows"):
         
-        colors = sns.color_palette("husl", n)
-        colors = sns.color_palette("mako", n)
+        colors = sns.color_palette("husl", n*total_time)
+        colors = sns.color_palette("mako", n*total_time)
         #sns.set_theme()
         sns.set_style("whitegrid")
         #sns.set_style("darkgrid", {"axes.facecolor": ".9"})
@@ -79,7 +79,7 @@ def plot_terms(prin, total_time, n, rate, plot_type, unit_circ,coor):
         # plt.xlim(-3, 3)
         # plt.ylim(-3, 3)
         if n <15:
-            for i in range(n):
+            for i in range(n*total_time):
                 xr=2
                 plt.plot([0, term[i].real], [0, term[i].imag],color="black")
                 plt.gca().add_patch(plt.Rectangle([term[i].real,term[i].imag],-.05,.05,np.degrees(np.angle(term[i])),facecolor='none',alpha=1,edgecolor='black')  )  
@@ -129,7 +129,7 @@ def real_compound_interest(prin, rate, n, time):
 # plot_terms(prin, t, 5,rate,"arrows")
 # plot_terms(prin, t, 10,rate,"arrows")
 # plot_terms(prin, t, 20,rate,"arrows")
-plot_terms(prin=1,total_time=np.pi,n=10,rate=complex(0,1),plot_type="arrows",unit_circ=0,coor=0)
+plot_terms(prin=1,total_time=5,n=5,rate=complex(0,1),plot_type="arrows",unit_circ=0,coor=0)
 #real_compound_interest(1,0.50,12,1)
 
 plt.show()
